@@ -1,0 +1,34 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`lancie-login-form`
+Login form for the lancie frontends
+
+@demo demo/index.html 
+-->
+
+<dom-module id="lancie-login-form">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'lancie-login-form',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'lancie-login-form',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
