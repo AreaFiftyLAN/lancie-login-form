@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       on-response="onCurrentUser"></iron-ajax>
 
       <lancie-error id="error"></lancie-error>
-      <lancie-form id="login" refurl="login" on-response="onLogin" hidden$="[[registering]]" on-response="onLogin">
+      <lancie-form id="login" refurl="login" hidden$="[[registering]]" on-response="onLogin">
         <gold-email-input id="username" label="Email" name="username" error-message="Email should be valid." required autofocus></gold-email-input>
         <paper-input label="Password" type="password" name="password" required></paper-input>
         <div class="reset">
