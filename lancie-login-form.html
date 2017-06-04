@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../gold-email-input/gold-email-input.html">
+<!-- <link rel="import" href="../gold-email-input/gold-email-input.html"> -->
 
 <link rel="import" href="../lancie-error/lancie-error.html">
 <link rel="import" href="../lancie-form/lancie-form.html">
@@ -45,14 +45,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <lancie-error id="error"></lancie-error>
       <lancie-form id="login" refurl="login" hidden$="[[registering]]" on-response="onLogin">
+<<<<<<< HEAD
         <gold-email-input label="Email" name="email" error-message="Email should be valid." required autofocus></gold-email-input>
+=======
+        <!-- <gold-email-input id="username" label="Email" name="username" error-message="Email should be valid." required autofocus></gold-email-input> -->
+>>>>>>> Update to Polymer 2
         <paper-input label="Password" type="password" name="password" required></paper-input>
         <div class="reset">
           <a href="https://areafiftylan.nl/password-reset-request">Forgot password?</a>
         </div>
       </lancie-form>
       <lancie-form id="register" refurl="users" hidden$="[[!registering]]" on-response="onRegister">
+<<<<<<< HEAD
         <gold-email-input label="Email" name="email" error-message="Email should be valid." autofocus required></gold-email-input>
+=======
+        <!-- <gold-email-input label="Email" name="username" error-message="Email should be valid." autofocus required></gold-email-input> -->
+>>>>>>> Update to Polymer 2
         <lancie-passwords></lancie-passwords>
         <paper-input id="orderId" name="orderId" hidden></paper-input>
       </lancie-form>
