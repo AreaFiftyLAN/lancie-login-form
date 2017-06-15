@@ -1,6 +1,6 @@
 {
   "name": "lancie-login-form",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Login form for the lancie frontends",
   "main": "lancie-login-form.html",
   "dependencies": {
