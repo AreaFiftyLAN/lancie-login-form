@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="lancie-login-form">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      :host {
+       :host {
         display: block;
       }
 
@@ -35,109 +35,104 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax
-      id="getCurrentUser"
-      url="/api/v1/users/current"
-      method="GET"
-      headers="[[headersFrom(_token)]]"
-      handle-as="json"
+    <iron-ajax id="getCurrentUser" url="/api/v1/users/current" method="GET" headers="[[headersFrom(_token)]]" handle-as="json"
       on-response="onCurrentUser"></iron-ajax>
 
-      <lancie-error id="error"></lancie-error>
-      <lancie-form id="login" refurl="login" hidden$="[[registering]]" on-response="onLogin">
-        <!-- <gold-email-input id="username" label="Email" name="username" error-message="Email should be valid." required autofocus></gold-email-input> -->
-        <paper-input label="Password" type="password" name="password" required></paper-input>
-        <div class="reset">
-          <a href="https://areafiftylan.nl/password-reset-request">Forgot password?</a>
-        </div>
-      </lancie-form>
-      <lancie-form id="register" refurl="users" hidden$="[[!registering]]" on-response="onRegister">
-        <!-- <gold-email-input label="Email" name="username" error-message="Email should be valid." autofocus required></gold-email-input> -->
-        <lancie-passwords></lancie-passwords>
-        <paper-input id="orderId" name="orderId" hidden></paper-input>
-      </lancie-form>
+    <lancie-error id="error"></lancie-error>
+    <lancie-form id="login" refurl="login" hidden$="[[registering]]" on-response="onLogin">
+      <paper-input type="email" label="Email" name="email" error-message="Email should be valid." required autofocus></paper-input>
+      <paper-input label="Password" type="password" name="password" required></paper-input>
+      <div class="reset">
+        <a href="https://areafiftylan.nl/password-reset-request">Forgot password?</a>
+      </div>
+    </lancie-form>
+    <lancie-form id="register" refurl="users" hidden$="[[!registering]]" on-response="onRegister">
+      <input type="email" label="Email" name="email" error-message="Email should be valid." required autofocus></paper-input>
+      <lancie-passwords></lancie-passwords>
+      <paper-input id="orderId" name="orderId" hidden></paper-input>
+    </lancie-form>
 
   </template>
   <script>
-  'use strict';
-  var _token;
+    'use strict';
+    var _token;
 
-  (function() {
-    Polymer({
-      is: 'lancie-login-form',
-      properties: {
-        registering: Boolean,
-        _token: {
-          type: String,
-          value: function() {
-            return _token;
+    (function () {
+      Polymer({
+        is: 'lancie-login-form',
+        properties: {
+          registering: Boolean,
+          _token: {
+            type: String,
+            value: function () {
+              return _token;
+            }
+          },
+          orderId: String,
+        },
+
+        tryRegister: function () {
+          this.$.error.clear();
+          this.$.orderId.value = this.orderId;
+          this.$.register.validateAndSubmit();
+        },
+
+        tryLogIn: function () {
+          this.$.error.clear();
+          this.$.login.validateAndSubmit();
+        },
+
+        onLogin: function (event, request) {
+          if (request.succeeded) {
+            this._token = request.xhr.getResponseHeader('X-Auth-Token');
+            this.$.getCurrentUser.generateRequest();
+          } else {
+            if (request.request.status === 401) {
+              if (request.request.xhr.response.message.indexOf('disabled') > 0) {
+                this.$.error.setError('Account not validated.');
+              } else {
+                this.$.error.setError('Bad credentials.');
+              }
+            } else {
+              this.$.error.setError('Server failed processing the request, please try refreshing the page.');
+            }
           }
         },
-        orderId: String,
-      },
 
-      tryRegister: function() {
-        this.$.error.clear();
-        this.$.orderId.value = this.orderId;
-        this.$.register.validateAndSubmit();
-      },
+        onCurrentUser: function (event, request) {
+          this.user = request.response;
 
-      tryLogIn: function() {
-        this.$.error.clear();
-        this.$.login.validateAndSubmit();
-      },
+          this.fire('logged-in', {
+            user: this.user,
+            token: this._token
+          });
+        },
 
-      onLogin: function(event, request) {
-        if (request.succeeded) {
-          this._token = request.xhr.getResponseHeader('X-Auth-Token');
-          this.$.getCurrentUser.generateRequest();
-        } else {
-          if (request.request.status === 401) {
-            if (request.request.xhr.response.message.indexOf('disabled') > 0) {
-              this.$.error.setError('Account not validated.');
+        onRegister: function (e, request) {
+          if (request.succeeded) {
+            this.fire('navigate', { page: 'check-email' });
+          } else {
+            if (request.request.status === 409) {
+              this.$.error.setError('Email is already in use.');
             } else {
-              this.$.error.setError('Bad credentials.');
+              this.$.error.setError('Server failed processing the request, please try refreshing the page.');
             }
-          } else {
-            this.$.error.setError('Server failed processing the request, please try refreshing the page.');
           }
-        }
-      },
+        },
 
-      onCurrentUser: function(event, request) {
-        this.user = request.response;
+        headersFrom: function (token) {
+          return {
+            'X-Auth-Token': token,
+          };
+        },
 
-        this.fire('logged-in', {
-          user: this.user,
-          token: this._token
-        });
-      },
+        clearError: function () {
+          this.$.error.clear();
+          this.$.login.reset();
+          this.$.register.reset();
+        },
 
-      onRegister: function(e, request) {
-        if (request.succeeded) {
-          this.fire('navigate', {page: 'check-email'});
-        } else {
-          if (request.request.status === 409) {
-            this.$.error.setError('Email is already in use.');
-          } else {
-            this.$.error.setError('Server failed processing the request, please try refreshing the page.');
-          }
-        }
-      },
-
-      headersFrom: function(token) {
-        return {
-          'X-Auth-Token': token,
-        };
-      },
-
-      clearError: function() {
-        this.$.error.clear();
-        this.$.login.reset();
-        this.$.register.reset();
-      },
-
-    });
-  })();
+      });
+    })();
   </script>
 </dom-module>
